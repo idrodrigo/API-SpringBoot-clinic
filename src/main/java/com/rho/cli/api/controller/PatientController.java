@@ -1,14 +1,17 @@
 package com.rho.cli.api.controller;
 
 import com.rho.cli.api.patient.Patient;
+import com.rho.cli.api.patient.PatientListDTO;
 import com.rho.cli.api.patient.PatientRepository;
 import com.rho.cli.api.patient.RegisterPatientDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/patient")
@@ -20,5 +23,10 @@ public class PatientController {
 //        System.out.println("PatientController.postPatient()");
 //        System.out.println("param = " + patient);
         PatientRepository.save(new Patient(patient));
+    }
+
+    @GetMapping
+    public Page<PatientListDTO> getPatients(@PageableDefault(size = 2, page = 0, sort = {"name"}) Pageable page){
+        return PatientRepository.findAll(page).map(PatientListDTO::new);
     }
 }

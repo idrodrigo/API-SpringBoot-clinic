@@ -22,6 +22,7 @@ public class Doctor {
     private String email;
     private String phone;
     private String document;
+    @Enumerated(EnumType.STRING)
     private Specialization specialization;
     @Embedded
     private Location location;
