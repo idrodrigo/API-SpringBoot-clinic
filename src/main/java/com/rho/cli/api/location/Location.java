@@ -23,4 +23,15 @@ public class Location {
         this.number = location.number();
         this.complement = location.complement();
     }
+
+    public Location updateData(Location location) {
+        this.address = location.getAddress();
+        this.district = location.getDistrict();
+        this.city = location.getCity();
+        this.number = location.getNumber();
+        if(location.getComplement() != null){
+            this.complement = location.getComplement();
+        }
+        return this;
+    }
 }
