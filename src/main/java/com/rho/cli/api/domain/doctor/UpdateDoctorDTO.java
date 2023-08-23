@@ -1,6 +1,6 @@
-package com.rho.cli.api.doctor;
+package com.rho.cli.api.domain.doctor;
 
-import com.rho.cli.api.location.Location;
+import com.rho.cli.api.domain.location.Location;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateDoctorDTO(

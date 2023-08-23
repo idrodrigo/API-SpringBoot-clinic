@@ -1,7 +1,7 @@
-package com.rho.cli.api.doctor;
+package com.rho.cli.api.domain.doctor;
 
 
-import com.rho.cli.api.location.LocationDTO;
+import com.rho.cli.api.domain.location.LocationDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,9 +9,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record RegisterDoctorDTO(
-        @NotBlank
+        @NotBlank(message = "{name.mandatory}")
         String name,
-        @Email
+        @NotBlank(message = "Email is mandatory")
+        @Email(message = "Email should be valid")
         String email,
         @NotBlank
         @Pattern(regexp = "^[0-9]{10}$")

@@ -1,8 +1,7 @@
-package com.rho.cli.api.patient;
+package com.rho.cli.api.domain.patient;
 
-import com.rho.cli.api.location.Location;
+import com.rho.cli.api.domain.location.Location;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

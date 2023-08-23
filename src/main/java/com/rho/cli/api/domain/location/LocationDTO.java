@@ -1,4 +1,4 @@
-package com.rho.cli.api.location;
+package com.rho.cli.api.domain.location;
 
 import jakarta.validation.constraints.NotBlank;
 

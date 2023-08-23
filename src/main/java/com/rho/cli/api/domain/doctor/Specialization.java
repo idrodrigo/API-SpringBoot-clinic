@@ -1,4 +1,4 @@
-package com.rho.cli.api.doctor;
+package com.rho.cli.api.domain.doctor;
 
 public enum Specialization {
     CARDIOLOGIST,

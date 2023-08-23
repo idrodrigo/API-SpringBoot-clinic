@@ -1,27 +1,24 @@
 package com.rho.cli.api.controller;
 
-import com.rho.cli.api.location.Location;
-import com.rho.cli.api.patient.*;
+import com.rho.cli.api.domain.location.Location;
+import com.rho.cli.api.domain.patient.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/patient")
 public class PatientController {
     @Autowired
-    private PatientRepository PatientRepository;
+    private com.rho.cli.api.domain.patient.PatientRepository PatientRepository;
     @PostMapping
     public ResponseEntity<ResponsePatientDTO> postPatient(
             @RequestBody
@@ -52,10 +49,10 @@ public class PatientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponsePatientDTO> getPatient(@PathVariable Long id){
-        Patient patient = PatientRepository.findById(id).orElse(null);
-        if (patient == null) {
-            return ResponseEntity.notFound().build();
-        }
+        Patient patient = PatientRepository.getReferenceById(id);
+//        if (patient == null) {
+//            return ResponseEntity.notFound().build();
+//        }
         var responsePatientDTO = new ResponsePatientDTO(
                 patient.getId(),
                 patient.getName(),
@@ -103,10 +100,10 @@ public class PatientController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<ResponsePatientDTO> deletePatient(@PathVariable Long id) {
-        Patient patient = PatientRepository.findById(id).orElse(null);
-        if(patient == null){
-            return ResponseEntity.notFound().build();
-        }
+        Patient patient = PatientRepository.getReferenceById(id);
+//        if(patient == null){
+//            return ResponseEntity.notFound().build();
+//        }
         PatientRepository.delete(patient);
         return ResponseEntity.noContent().build();
     }

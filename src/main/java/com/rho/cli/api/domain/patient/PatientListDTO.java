@@ -1,4 +1,4 @@
-package com.rho.cli.api.patient;
+package com.rho.cli.api.domain.patient;
 
 public record PatientListDTO(
         Long id,

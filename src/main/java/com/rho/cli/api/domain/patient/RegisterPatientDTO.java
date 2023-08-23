@@ -1,6 +1,6 @@
-package com.rho.cli.api.patient;
+package com.rho.cli.api.domain.patient;
 
-import com.rho.cli.api.location.LocationDTO;
+import com.rho.cli.api.domain.location.LocationDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

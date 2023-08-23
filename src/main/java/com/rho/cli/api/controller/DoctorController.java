@@ -1,27 +1,24 @@
 package com.rho.cli.api.controller;
 
-import com.rho.cli.api.doctor.*;
-import com.rho.cli.api.location.Location;
+import com.rho.cli.api.domain.doctor.*;
+import com.rho.cli.api.domain.location.Location;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/doctor")
 public class DoctorController {
     @Autowired
-    private DoctorRepository DoctorRepository;
+    private com.rho.cli.api.domain.doctor.DoctorRepository DoctorRepository;
     @PostMapping
     public ResponseEntity<ResponseDoctorDTO> postDoctor(
             @RequestBody
@@ -65,10 +62,10 @@ public class DoctorController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDoctorDTO> getDoctor(@PathVariable Long id) {
-        Doctor doctor = DoctorRepository.findById(id).orElse(null);
-        if (doctor == null) {
-            return ResponseEntity.notFound().build();
-        }
+        Doctor doctor = DoctorRepository.getReferenceById(id);
+//        if (doctor == null) {
+//            return ResponseEntity.notFound().build();
+//        }
         var responseDoctorDTO = new ResponseDoctorDTO(
                 doctor.getId(),
                 doctor.getName(),
