@@ -1,16 +1,20 @@
 package com.rho.cli.api.controller;
 
 import com.rho.cli.api.doctor.*;
+import com.rho.cli.api.location.Location;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -19,10 +23,35 @@ public class DoctorController {
     @Autowired
     private DoctorRepository DoctorRepository;
     @PostMapping
-    public void postDoctor(@RequestBody @Valid RegisterDoctorDTO doctor) {
+    public ResponseEntity<ResponseDoctorDTO> postDoctor(
+            @RequestBody
+            @Valid
+            RegisterDoctorDTO registerDoctorDTO,
+            UriComponentsBuilder uriComponentsBuilder
+    ) {
 //        System.out.println("DoctorController.postDoctor()");
 //        System.out.println("param = " + doctor);
-        DoctorRepository.save(new Doctor(doctor));
+        Doctor doctor = DoctorRepository.save(new Doctor(registerDoctorDTO));
+        //return 201 created
+        // get http://localhost:8080/api/doctor/1
+       ResponseDoctorDTO responseDoctorDTO = new ResponseDoctorDTO(
+                doctor.getId(),
+                doctor.getName(),
+                doctor.getEmail(),
+                doctor.getPhone(),
+                doctor.getDocument(),
+                doctor.getSpecialization(),
+                new Location(
+                        doctor.getLocation().getAddress(),
+                        doctor.getLocation().getDistrict(),
+                        doctor.getLocation().getCity(),
+                        doctor.getLocation().getNumber(),
+                        doctor.getLocation().getComplement()
+                )
+        );
+//      URI url = URI.create("http://localhost:8080/api/doctor/" + doctor.getId());
+        URI url = uriComponentsBuilder.path("/api/doctor/{id}").buildAndExpand(doctor.getId()).toUri();
+       return ResponseEntity.created(url).body(responseDoctorDTO);
     }
 //    @GetMapping
 //    public List<DoctorListDTO> getDoctors() {
@@ -34,20 +63,60 @@ public class DoctorController {
         //where isActive = true
         return DoctorRepository.findAllByIsActiveTrue(page).map(DoctorListDTO::new);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseDoctorDTO> getDoctor(@PathVariable Long id) {
+        Doctor doctor = DoctorRepository.findById(id).orElse(null);
+        if (doctor == null) {
+            return ResponseEntity.notFound().build();
+        }
+        var responseDoctorDTO = new ResponseDoctorDTO(
+                doctor.getId(),
+                doctor.getName(),
+                doctor.getEmail(),
+                doctor.getPhone(),
+                doctor.getDocument(),
+                doctor.getSpecialization(),
+                new Location(
+                        doctor.getLocation().getAddress(),
+                        doctor.getLocation().getDistrict(),
+                        doctor.getLocation().getCity(),
+                        doctor.getLocation().getNumber(),
+                        doctor.getLocation().getComplement()
+                )
+        );
+        return ResponseEntity.ok(responseDoctorDTO);
+    }
     @PatchMapping
     @Transactional
-    public void updateDoctor(@RequestBody @Valid UpdateDoctorDTO UpdateDoctorDTO) {
+    public ResponseEntity<ResponseDoctorDTO> updateDoctor(@RequestBody @Valid UpdateDoctorDTO UpdateDoctorDTO) {
         Doctor doctor= DoctorRepository.getReferenceById(UpdateDoctorDTO.id());
         doctor.updateData(UpdateDoctorDTO);
+        return ResponseEntity.ok(new ResponseDoctorDTO(
+                doctor.getId(),
+                doctor.getName(),
+                doctor.getEmail(),
+                doctor.getPhone(),
+                doctor.getDocument(),
+                doctor.getSpecialization(),
+                new Location(
+                        doctor.getLocation().getAddress(),
+                        doctor.getLocation().getDistrict(),
+                        doctor.getLocation().getCity(),
+                        doctor.getLocation().getNumber(),
+                        doctor.getLocation().getComplement()
+                        )
+        ));
     }
     @DeleteMapping("/{id}")
     @Transactional
-    public void deleteDoctor(@PathVariable Long id) {
+    public ResponseEntity<ResponseDoctorDTO> deleteDoctor(@PathVariable Long id) {
         Doctor doctor = DoctorRepository.findById(id).orElse(null);
         if(doctor == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Doctor with ID " + id + " not found");
+            return ResponseEntity.notFound().build();
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Doctor with ID " + id + " not found");
         }
         DoctorRepository.delete(doctor);
+        return ResponseEntity.noContent().build();
     }
     @PatchMapping("/{id}")
     @Transactional
