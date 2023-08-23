@@ -58,10 +58,10 @@ public class DoctorController {
 //        return DoctorRepository.findAll().stream().map(DoctorListDTO::new).toList();
 //    }
     @GetMapping
-    public Page<DoctorListDTO> getActiveDoctors(@PageableDefault(size = 2, page = 0, sort = {"name"}) Pageable page){
+    public ResponseEntity<Page<DoctorListDTO>> getActiveDoctors(@PageableDefault(size = 2, page = 0, sort = {"name"}) Pageable page){
 //        return DoctorRepository.findAll(page).map(DoctorListDTO::new);
         //where isActive = true
-        return DoctorRepository.findAllByIsActiveTrue(page).map(DoctorListDTO::new);
+        return ResponseEntity.ok(DoctorRepository.findAllByIsActiveTrue(page).map(DoctorListDTO::new));
     }
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDoctorDTO> getDoctor(@PathVariable Long id) {
@@ -120,8 +120,24 @@ public class DoctorController {
     }
     @PatchMapping("/{id}")
     @Transactional
-    public void setIsActive(@PathVariable Long id) {
+    public ResponseEntity<ResponseDoctorDTO> setIsActive(@PathVariable Long id) {
         Doctor doctor = DoctorRepository.getReferenceById(id);
         doctor.setIsActive();
+        var responseDoctorDTO = new ResponseDoctorDTO(
+                doctor.getId(),
+                doctor.getName(),
+                doctor.getEmail(),
+                doctor.getPhone(),
+                doctor.getDocument(),
+                doctor.getSpecialization(),
+                new Location(
+                        doctor.getLocation().getAddress(),
+                        doctor.getLocation().getDistrict(),
+                        doctor.getLocation().getCity(),
+                        doctor.getLocation().getNumber(),
+                        doctor.getLocation().getComplement()
+                )
+        );
+        return ResponseEntity.ok(responseDoctorDTO);
     }
 }

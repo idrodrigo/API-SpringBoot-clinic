@@ -1,5 +1,6 @@
 package com.rho.cli.api.controller;
 
+import com.rho.cli.api.location.Location;
 import com.rho.cli.api.patient.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,10 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -19,36 +23,112 @@ public class PatientController {
     @Autowired
     private PatientRepository PatientRepository;
     @PostMapping
-    public void postPatient(@RequestBody @Valid RegisterPatientDTO patient) {
+    public ResponseEntity<ResponsePatientDTO> postPatient(
+            @RequestBody
+            @Valid
+            RegisterPatientDTO registerPatientDTO,
+            UriComponentsBuilder uriComponentsBuilder
+    ) {
 //        System.out.println("PatientController.postPatient()");
 //        System.out.println("param = " + patient);
-        PatientRepository.save(new Patient(patient));
+        Patient patient = PatientRepository.save(new Patient(registerPatientDTO));
+        ResponsePatientDTO responsePatientDTO = new ResponsePatientDTO(
+                patient.getId(),
+                patient.getName(),
+                patient.getEmail(),
+                patient.getPhone(),
+                patient.getDni(),
+                new Location(
+                        patient.getLocation().getAddress(),
+                        patient.getLocation().getDistrict(),
+                        patient.getLocation().getCity(),
+                        patient.getLocation().getNumber(),
+                        patient.getLocation().getComplement()
+                )
+        );
+        URI url = uriComponentsBuilder.path("/api/patient/{id}").buildAndExpand(patient.getId()).toUri();
+        return ResponseEntity.created(url).body(responsePatientDTO);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponsePatientDTO> getPatient(@PathVariable Long id){
+        Patient patient = PatientRepository.findById(id).orElse(null);
+        if (patient == null) {
+            return ResponseEntity.notFound().build();
+        }
+        var responsePatientDTO = new ResponsePatientDTO(
+                patient.getId(),
+                patient.getName(),
+                patient.getEmail(),
+                patient.getPhone(),
+                patient.getDni(),
+                new Location(
+                        patient.getLocation().getAddress(),
+                        patient.getLocation().getDistrict(),
+                        patient.getLocation().getCity(),
+                        patient.getLocation().getNumber(),
+                        patient.getLocation().getComplement()
+                )
+        );
+        return ResponseEntity.ok(responsePatientDTO);
+    }
+
     @GetMapping
-    public Page<PatientListDTO> getPatients(@PageableDefault(size = 2, page = 0, sort = {"name"}) Pageable page){
+    public ResponseEntity<Page<PatientListDTO>> getPatients(@PageableDefault(size = 2, page = 0, sort = {"name"}) Pageable page){
 //        return PatientRepository.findAll(page).map(PatientListDTO::new);
         //where isActive = true
-        return PatientRepository.findAllByIsActiveTrue(page).map(PatientListDTO::new);
+        return ResponseEntity.ok(PatientRepository.findAllByIsActiveTrue(page).map(PatientListDTO::new));
     }
     @PatchMapping
     @Transactional
-    public void updatePatient(@RequestBody @Valid UpdatePatientDTO UpdatePatientDTO) {
+    public ResponseEntity<ResponsePatientDTO> updatePatient(@RequestBody @Valid UpdatePatientDTO UpdatePatientDTO) {
         Patient patient= PatientRepository.getReferenceById(UpdatePatientDTO.id());
         patient.updateData(UpdatePatientDTO);
+        var responsePatientDTO = new ResponsePatientDTO(
+                patient.getId(),
+                patient.getName(),
+                patient.getEmail(),
+                patient.getPhone(),
+                patient.getDni(),
+                new Location(
+                        patient.getLocation().getAddress(),
+                        patient.getLocation().getDistrict(),
+                        patient.getLocation().getCity(),
+                        patient.getLocation().getNumber(),
+                        patient.getLocation().getComplement()
+                )
+        );
+        return ResponseEntity.ok(responsePatientDTO);
     }
     @DeleteMapping("/{id}")
     @Transactional
-    public void deletePatient(@PathVariable Long id) {
+    public ResponseEntity<ResponsePatientDTO> deletePatient(@PathVariable Long id) {
         Patient patient = PatientRepository.findById(id).orElse(null);
         if(patient == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient with ID " + id + " not found");
+            return ResponseEntity.notFound().build();
         }
         PatientRepository.delete(patient);
+        return ResponseEntity.noContent().build();
     }
     @PatchMapping("/{id}")
     @Transactional
-    public void setIsActive(@PathVariable Long id) {
+    public ResponseEntity<ResponsePatientDTO> setIsActive(@PathVariable Long id) {
         Patient patient = PatientRepository.getReferenceById(id);
         patient.setIsActive();
+        var responsePatientDTO = new ResponsePatientDTO(
+                patient.getId(),
+                patient.getName(),
+                patient.getEmail(),
+                patient.getPhone(),
+                patient.getDni(),
+                new Location(
+                        patient.getLocation().getAddress(),
+                        patient.getLocation().getDistrict(),
+                        patient.getLocation().getCity(),
+                        patient.getLocation().getNumber(),
+                        patient.getLocation().getComplement()
+                )
+        );
+        return ResponseEntity.ok(responsePatientDTO);
     }
 }
