@@ -1,4 +1,4 @@
-package com.rho.cli.api.infra;
+package com.rho.cli.api.infra.errors;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
