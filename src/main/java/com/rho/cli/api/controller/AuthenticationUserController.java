@@ -1,6 +1,8 @@
 package com.rho.cli.api.controller;
 
+import com.rho.cli.api.domain.user.User;
 import com.rho.cli.api.domain.user.UserAuthenticationDTO;
+import com.rho.cli.api.infra.security.JWTtokenDTO;
 import com.rho.cli.api.infra.security.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,8 @@ public class    AuthenticationUserController {
                 userAuthenticationDTO.login(),
                 userAuthenticationDTO.password()
         );
-        authenticationManager.authenticate(authtoken);
-        var JWTtoken = tokenService.generateToken();
-        return ResponseEntity.ok(JWTtoken);
+        var authUser = authenticationManager.authenticate(authtoken).getPrincipal();
+        var JWTtoken = tokenService.generateToken((User) authUser);
+        return ResponseEntity.ok(new JWTtokenDTO(JWTtoken));
     }
 }

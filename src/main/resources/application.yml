@@ -30,3 +30,9 @@ spring:
         format_sql: true
 #        dialect: org.hibernate.dialect.MySQL5Dialect
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+api:
+  security:
+    token:
+      secret-key: ${JWT_SECRET_KEY:secret}
+      expiration-time: 172800
