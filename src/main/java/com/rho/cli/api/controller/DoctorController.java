@@ -2,6 +2,7 @@ package com.rho.cli.api.controller;
 
 import com.rho.cli.api.domain.doctor.*;
 import com.rho.cli.api.domain.location.Location;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/doctor")
+@SecurityRequirement(name = "bearer-key")
 public class DoctorController {
     @Autowired
     private com.rho.cli.api.domain.doctor.DoctorRepository DoctorRepository;

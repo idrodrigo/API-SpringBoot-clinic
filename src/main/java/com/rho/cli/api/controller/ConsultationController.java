@@ -1,34 +1,44 @@
 package com.rho.cli.api.controller;
 
+import com.rho.cli.api.domain.consultation.CancelConsultationDTO;
 import com.rho.cli.api.domain.consultation.ScheduleConsultationDTO;
 import com.rho.cli.api.domain.consultation.ScheduleConsultationService;
-import com.rho.cli.api.domain.consultation.scheduleDetailsConsultationDTO;
+import com.rho.cli.api.infra.errors.IntegrityValidation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @ResponseBody
 @RequestMapping("/api/consultation")
+@SecurityRequirement(name = "bearer-key")
 public class ConsultationController {
     @Autowired
-    private ScheduleConsultationService scheduleConsultationService;
+    private ScheduleConsultationService service;
     @PostMapping
     @Transactional
     public ResponseEntity<?> scheduleConsultation(
             @RequestBody
             @Valid
             ScheduleConsultationDTO scheduleConsultationDTO
-    ) {
-        scheduleConsultationService.schelude(scheduleConsultationDTO);
-        return ResponseEntity.ok(new scheduleDetailsConsultationDTO(
-                null, null, null, null
-        ));
+    ) throws IntegrityValidation {
+        var response = service.schelude(scheduleConsultationDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping
+    @Transactional
+    public ResponseEntity<?> cancelConsultation(
+            @RequestBody
+            @Valid
+            CancelConsultationDTO cancelConsultationDTO
+    ) throws ValidationException {
+        service.cancel(cancelConsultationDTO);
+        return ResponseEntity.noContent().build();
     }
 }

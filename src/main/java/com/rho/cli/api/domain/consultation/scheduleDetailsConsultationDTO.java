@@ -8,4 +8,12 @@ public record scheduleDetailsConsultationDTO(
         Long doctorId,
         LocalDateTime date
 ) {
+    public scheduleDetailsConsultationDTO(Consultation consultation) {
+        this(
+                consultation.getId(),
+                consultation.getPatient().getId(),
+                consultation.getDoctor().getId(),
+                consultation.getDate()
+        );
+    }
 }

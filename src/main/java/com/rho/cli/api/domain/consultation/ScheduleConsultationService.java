@@ -1,12 +1,15 @@
 package com.rho.cli.api.domain.consultation;
 
+import com.rho.cli.api.domain.consultation.validation.CancelConsultValidator;
+import com.rho.cli.api.domain.consultation.validation.ConsultValidator;
 import com.rho.cli.api.domain.doctor.Doctor;
 import com.rho.cli.api.domain.doctor.DoctorRepository;
-import com.rho.cli.api.domain.patient.Patient;
 import com.rho.cli.api.domain.patient.PatientRepository;
 import com.rho.cli.api.infra.errors.IntegrityValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ScheduleConsultationService {
@@ -16,38 +19,55 @@ public class ScheduleConsultationService {
     private PatientRepository patientRepository;
     @Autowired
     private ConsultationRepository consultationRepository;
-    public void schelude(ScheduleConsultationDTO scheduleConsultationDTO) {
-        if (!patientRepository.findById(scheduleConsultationDTO.patientId()).isPresent()){
+    @Autowired
+    List<ConsultValidator> validators;
+    @Autowired
+    List<CancelConsultValidator> cancelValidators;
+
+    public scheduleDetailsConsultationDTO schelude(ScheduleConsultationDTO data) {
+        if (!patientRepository.findById(data.patientId()).isPresent()){
             throw new IntegrityValidation("Patient id not found");
         }
 
-        if(scheduleConsultationDTO.doctorId()!=null
-                && !doctorRepository.existsById(scheduleConsultationDTO.doctorId())){
+        if(data.doctorId()!=null
+                && !doctorRepository.existsById(data.doctorId())){
             throw new IntegrityValidation("Doctor id not found");
         }
 
-        var patient = patientRepository.findById(scheduleConsultationDTO.patientId()).get();
+        validators.forEach(validator -> validator.validate(data));
 
-        var doctor = selectDoctor(scheduleConsultationDTO);
+        var patient = patientRepository.findById(data.patientId()).get();
+
+        var doctor = selectDoctor(data);
+        if (doctor == null){
+            throw new IntegrityValidation("Doctor not found to this specialization and date");
+        }
 
         var consultation = new Consultation(
-                null,
-                patient,
                 doctor,
-                scheduleConsultationDTO.date()
+                patient,
+                data.date()
         );
         consultationRepository.save(consultation);
+        return new scheduleDetailsConsultationDTO(consultation);
     }
 
-    private Doctor selectDoctor(ScheduleConsultationDTO scheduleConsultationDTO) {
-        if (scheduleConsultationDTO.doctorId()!=null){
-            return doctorRepository.getReferenceById(scheduleConsultationDTO.doctorId());
+    private Doctor selectDoctor(ScheduleConsultationDTO data) {
+        if (data.doctorId()!=null){
+            return doctorRepository.getReferenceById(data.doctorId());
         }
-        if (scheduleConsultationDTO.specialization() == null){
+        if (data.specialization() == null){
             throw new IntegrityValidation("Specialization is required");
         }
         return doctorRepository.selectDoctorWithSpecialization(
-                scheduleConsultationDTO.specialization(), scheduleConsultationDTO.date()
+                data.specialization(), data.date()
         );
+    }
+
+    public void cancel(CancelConsultationDTO cancelConsultationDTO) {
+          var consultation = consultationRepository.findById(cancelConsultationDTO.id())
+                    .orElseThrow(() -> new IntegrityValidation("Consultation id not found"));
+            cancelValidators.forEach(validator -> validator.validate(cancelConsultationDTO));
+            consultationRepository.delete(consultation);
     }
 }

@@ -8,14 +8,12 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record ScheduleConsultationDTO(
-        Long id,
         @NotNull
         Long patientId,
-        @NotNull
         Long doctorId,
         @NotNull
         @Future
-        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+//        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
 //                "date": "2023-12-10T10:30"
         LocalDateTime date,
         Specialization specialization

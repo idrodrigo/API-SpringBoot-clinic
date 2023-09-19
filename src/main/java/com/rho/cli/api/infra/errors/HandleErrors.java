@@ -1,6 +1,7 @@
 package com.rho.cli.api.infra.errors;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -31,5 +32,15 @@ public class HandleErrors {
     public ResponseEntity<?> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
         var error = e.getMessage();
         return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(IntegrityValidation.class)
+    public ResponseEntity<?> errorHandlerValidators(Exception e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<?> errorHandlerValidationException(Exception e){
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
