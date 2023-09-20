@@ -16,7 +16,7 @@ public class DoctorWithConsult implements ConsultValidator{
         }
         var doctor = repository.existsByDoctorIdAndDate(scheduleConsultationDTO.doctorId(), scheduleConsultationDTO.date());
         if (doctor) {
-            throw new ValidationException("Doctor is not available in this date and time");
+            throw new ValidationException("Doctor is not available in this time of the day");
         }
     }
 }

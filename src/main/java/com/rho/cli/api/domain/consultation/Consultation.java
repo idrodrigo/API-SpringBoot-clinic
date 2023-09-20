@@ -31,7 +31,7 @@ public class Consultation {
 
     private LocalDateTime date;
 
-    @Column(name = "cancelation_reason")
+    @Column(name = "cancellation_reason")
     @Enumerated(EnumType.STRING)
     private CancellationReason cancellationReason;
 

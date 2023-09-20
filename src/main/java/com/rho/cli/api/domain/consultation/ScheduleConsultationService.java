@@ -24,7 +24,7 @@ public class ScheduleConsultationService {
     @Autowired
     List<CancelConsultValidator> cancelValidators;
 
-    public scheduleDetailsConsultationDTO schelude(ScheduleConsultationDTO data) {
+    public ScheduleDetailsConsultationDTO schelude(ScheduleConsultationDTO data) {
         if (!patientRepository.findById(data.patientId()).isPresent()){
             throw new IntegrityValidation("Patient id not found");
         }
@@ -49,7 +49,7 @@ public class ScheduleConsultationService {
                 data.date()
         );
         consultationRepository.save(consultation);
-        return new scheduleDetailsConsultationDTO(consultation);
+        return new ScheduleDetailsConsultationDTO(consultation);
     }
 
     private Doctor selectDoctor(ScheduleConsultationDTO data) {
@@ -64,10 +64,18 @@ public class ScheduleConsultationService {
         );
     }
 
+//    public void cancel(CancelConsultationDTO cancelConsultationDTO) {
+//          var consultation = consultationRepository.findById(cancelConsultationDTO.id())
+//                    .orElseThrow(() -> new IntegrityValidation("Consultation id not found"));
+//            cancelValidators.forEach(validator -> validator.validate(cancelConsultationDTO));
+//            consultationRepository.delete(consultation);
+//    }
+
     public void cancel(CancelConsultationDTO cancelConsultationDTO) {
-          var consultation = consultationRepository.findById(cancelConsultationDTO.id())
-                    .orElseThrow(() -> new IntegrityValidation("Consultation id not found"));
-            cancelValidators.forEach(validator -> validator.validate(cancelConsultationDTO));
-            consultationRepository.delete(consultation);
+        var consultation = consultationRepository.findById(cancelConsultationDTO.id())
+                .orElseThrow(() -> new IntegrityValidation("Consultation id not found"));
+        cancelValidators.forEach(validator -> validator.validate(cancelConsultationDTO));
+        consultation.cancel(cancelConsultationDTO.reason());
+        consultationRepository.save(consultation);
     }
 }

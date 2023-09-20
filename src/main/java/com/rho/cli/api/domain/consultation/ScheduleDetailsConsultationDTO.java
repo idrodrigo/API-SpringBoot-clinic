@@ -2,13 +2,13 @@ package com.rho.cli.api.domain.consultation;
 
 import java.time.LocalDateTime;
 
-public record scheduleDetailsConsultationDTO(
+public record ScheduleDetailsConsultationDTO(
         Long id,
         Long patientId,
         Long doctorId,
         LocalDateTime date
 ) {
-    public scheduleDetailsConsultationDTO(Consultation consultation) {
+    public ScheduleDetailsConsultationDTO(Consultation consultation) {
         this(
                 consultation.getId(),
                 consultation.getPatient().getId(),
