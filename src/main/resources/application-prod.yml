@@ -1,0 +1,27 @@
+spring:
+  profile.active: prod
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+#      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+#        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
+server:
+  error:
+    include-stacktrace: never
+
+api:
+  security:
+    token:
+      secret-key: ${JWT_SECRET_KEY:secret}
+      expiration-time: 172800
+
+#  java -DDATASOURCE_URL=jdbc:mysql://localhost/clinic -DDATASOURCE_USERNAME=root -DDATASOURCE_PASSWORD=root -jar target/api-0.0.1-SNAPSHOT.jar  --spring.profiles.active=prod
