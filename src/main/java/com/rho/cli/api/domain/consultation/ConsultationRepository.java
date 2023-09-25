@@ -1,5 +1,7 @@
 package com.rho.cli.api.domain.consultation;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +12,6 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
     Boolean existsByPatientIdAndDateBetween(Long patientID, LocalDateTime firstSchedule, LocalDateTime lastSchedule);
 
     Boolean existsByDoctorIdAndDate(Long doctorID, LocalDateTime date);
+
+    Page<Consultation> findAll(Pageable page);
 }

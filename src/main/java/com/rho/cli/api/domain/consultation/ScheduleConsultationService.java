@@ -6,7 +6,10 @@ import com.rho.cli.api.domain.doctor.Doctor;
 import com.rho.cli.api.domain.doctor.DoctorRepository;
 import com.rho.cli.api.domain.patient.PatientRepository;
 import com.rho.cli.api.infra.errors.IntegrityValidation;
+import io.micrometer.observation.ObservationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -77,5 +80,9 @@ public class ScheduleConsultationService {
         cancelValidators.forEach(validator -> validator.validate(cancelConsultationDTO));
         consultation.cancel(cancelConsultationDTO.reason());
         consultationRepository.save(consultation);
+    }
+
+   public Page<ScheduleDetailsConsultationDTO> findAll(Pageable page) {
+        return consultationRepository.findAll(page).map(ScheduleDetailsConsultationDTO::new);
     }
 }

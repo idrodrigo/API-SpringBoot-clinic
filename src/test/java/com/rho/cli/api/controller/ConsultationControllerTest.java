@@ -59,7 +59,9 @@ class ConsultationControllerTest {
         var data = new ScheduleDetailsConsultationDTO(
                 null,
                 1L,
+                "Patient Name",
                 1L,
+                "Doctor Name",
                 date
         );
         var expectedJson = detailsConsultationDTOJacksonTester.write(data).getJson();

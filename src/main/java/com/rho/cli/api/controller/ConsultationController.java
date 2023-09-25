@@ -1,14 +1,15 @@
 package com.rho.cli.api.controller;
 
-import com.rho.cli.api.domain.consultation.CancelConsultationDTO;
-import com.rho.cli.api.domain.consultation.ScheduleConsultationDTO;
-import com.rho.cli.api.domain.consultation.ScheduleConsultationService;
+import com.rho.cli.api.domain.consultation.*;
 import com.rho.cli.api.infra.errors.IntegrityValidation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,4 +51,18 @@ public class ConsultationController {
         service.cancel(cancelConsultationDTO);
         return ResponseEntity.noContent().build();
     }
+
+//        @GetMapping
+//    public ResponseEntity<Page<DoctorListDTO>> getActiveDoctors(@PageableDefault(size = 2, page = 0, sort = {"name"}) Pageable page){
+//        return ResponseEntity.ok(DoctorRepository.findAllByIsActiveTrue(page).map(DoctorListDTO::new));
+//    }
+    @GetMapping
+    @Operation(
+            summary = "Get all consultations",
+            description = "Get all consultations",
+            tags = {"consultation", "get"})
+    public ResponseEntity<Page<ConsultationListDTO>> getConsultations(@PageableDefault(size = 2, page = 0) Pageable page){
+        return ResponseEntity.ok(service.findAll(page).map(ConsultationListDTO::new));
+    }
+
 }
