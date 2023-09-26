@@ -44,7 +44,7 @@ class ConsultationControllerTest {
     @DisplayName("Must return a 400 status code when the request body is invalid")
     void scheduleConsultationCase1() throws Exception {
         //given //when
-        var response = mockMvc.perform(post("/api/consultation")).andReturn().getResponse();
+        var response = mockMvc.perform(post("/api/v1.0/consultation")).andReturn().getResponse();
         //then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
@@ -69,7 +69,7 @@ class ConsultationControllerTest {
         // when
         when(service.schelude(any())).thenReturn(data);
 
-        var response = mockMvc.perform(post("/api/consultation")
+        var response = mockMvc.perform(post("/api/v1.0/consultation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(consultationDTOJacksonTester.write(
                         new ScheduleConsultationDTO(
