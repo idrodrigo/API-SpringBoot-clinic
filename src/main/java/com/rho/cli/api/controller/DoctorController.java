@@ -2,7 +2,9 @@ package com.rho.cli.api.controller;
 
 import com.rho.cli.api.domain.doctor.*;
 import com.rho.cli.api.domain.location.Location;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,12 +19,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/doctor")
+@RequestMapping("/api/v1.0/doctor")
+//@Tag(name = "Doctor", description = "Doctor API to register, update and delete doctors")
 @SecurityRequirement(name = "bearer-key")
 public class DoctorController {
     @Autowired
     private com.rho.cli.api.domain.doctor.DoctorRepository DoctorRepository;
     @PostMapping
+    @Operation(
+            summary = "Register a doctor",
+            description = "Register a doctor",
+            tags = {"doctor", "post"})
     public ResponseEntity<ResponseDoctorDTO> postDoctor(
             @RequestBody
             @Valid
@@ -58,12 +65,20 @@ public class DoctorController {
 //        return DoctorRepository.findAll().stream().map(DoctorListDTO::new).toList();
 //    }
     @GetMapping
+    @Operation(
+            summary = "Get all active doctors",
+            description = "Get all active doctors",
+            tags = {"doctor", "get"})
     public ResponseEntity<Page<DoctorListDTO>> getActiveDoctors(@PageableDefault(size = 2, page = 0, sort = {"name"}) Pageable page){
 //        return DoctorRepository.findAll(page).map(DoctorListDTO::new);
         //where isActive = true
         return ResponseEntity.ok(DoctorRepository.findAllByIsActiveTrue(page).map(DoctorListDTO::new));
     }
     @GetMapping("/{id}")
+    @Operation(
+            summary = "Get a doctor by ID",
+            description = "Get a doctor by ID",
+            tags = {"doctor", "get"})
     public ResponseEntity<ResponseDoctorDTO> getDoctor(@PathVariable Long id) {
         Doctor doctor = DoctorRepository.getReferenceById(id);
 //        if (doctor == null) {
@@ -88,6 +103,10 @@ public class DoctorController {
     }
     @PatchMapping
     @Transactional
+    @Operation(
+            summary = "Update a doctor",
+            description = "Update a doctor",
+            tags = {"doctor", "patch"})
     public ResponseEntity<ResponseDoctorDTO> updateDoctor(@RequestBody @Valid UpdateDoctorDTO UpdateDoctorDTO) {
         Doctor doctor= DoctorRepository.getReferenceById(UpdateDoctorDTO.id());
         doctor.updateData(UpdateDoctorDTO);
@@ -110,6 +129,10 @@ public class DoctorController {
     @DeleteMapping("/{id}")
     @Secured("ROLE_ADMIN")
     @Transactional
+    @Operation(
+            summary = "Delete a doctor",
+            description = "Delete a doctor",
+            tags = {"doctor", "delete"})
     public ResponseEntity<ResponseDoctorDTO> deleteDoctor(@PathVariable Long id) {
         Doctor doctor = DoctorRepository.findById(id).orElse(null);
         if(doctor == null){
@@ -121,6 +144,10 @@ public class DoctorController {
     }
     @PatchMapping("/{id}")
     @Transactional
+    @Operation(
+            summary = "Set a doctor as active or inactive",
+            description = "Set a doctor as active or inactive",
+            tags = {"doctor", "patch"})
     public ResponseEntity<ResponseDoctorDTO> setIsActive(@PathVariable Long id) {
         Doctor doctor = DoctorRepository.getReferenceById(id);
         doctor.setIsActive();

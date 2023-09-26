@@ -4,6 +4,7 @@ import com.rho.cli.api.domain.consultation.*;
 import com.rho.cli.api.infra.errors.IntegrityValidation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @ResponseBody
-@RequestMapping("/api/consultation")
+@RequestMapping("/api/v1.0/consultation")
+//@Tag(name = "Consultation", description = "Consultation API to schedule and cancel consultations")
 @SecurityRequirement(name = "bearer-key")
 public class ConsultationController {
     @Autowired

@@ -17,12 +17,9 @@ server:
 spring:
   profile.active: dev, test, prod
   datasource:
-#    url: jdbc:mysql://localhost:3306/clinic?useSSL=false
-#    username: root
-#    password: 1234
-    url: jdbc:mysql://root:qXDCSEMky6DAUTagS6jB@containers-us-west-74.railway.app:7229/railway
+    url: jdbc:mysql://localhost:3306/test?useSSL=false
     username: root
-    password: qXDCSEMky6DAUTagS6jB
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
