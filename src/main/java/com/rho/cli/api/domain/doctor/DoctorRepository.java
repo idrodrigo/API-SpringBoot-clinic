@@ -11,13 +11,13 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Page<Doctor> findAllByIsActiveTrue(Pageable page);
 
     @Query("""
-            select d from doctor d 
-            where d.isActive=true 
-            and 
+            select d from doctor d
+            where d.isActive=true
+            and
             d.specialization = :specialization
             and d.id not in(select c.doctor from consultation  c
             where c.date = :d)
-            order by rand()
+            order by random()
             limit 1
             """)
     Doctor selectDoctorWithSpecialization(Specialization specialization, LocalDateTime d);

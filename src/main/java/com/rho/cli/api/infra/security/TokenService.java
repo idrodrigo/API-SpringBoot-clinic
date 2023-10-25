@@ -51,8 +51,7 @@ public class TokenService {
         } catch (JWTCreationException exception) {
             throw new RuntimeException(exception);
         }
-        if (verify.getSubject() == null)
-            throw new RuntimeException("Invalid token");
+        if (verify.getSubject() == null) throw new RuntimeException("Invalid token");
         return verify.getSubject();
     }
 }

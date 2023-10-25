@@ -46,6 +46,7 @@ class DoctorRepositoryTest {
                 Specialization.CARDIOLOGIST,
                 nextMonday10H
         );
+        System.out.println(freeDoctor);
 
         //then
         assertThat(freeDoctor).isNull();

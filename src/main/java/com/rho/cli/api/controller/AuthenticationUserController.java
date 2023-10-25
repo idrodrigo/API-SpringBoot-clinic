@@ -38,10 +38,8 @@ public class AuthenticationUserController {
                 userAuthenticationDTO.login(),
                 userAuthenticationDTO.password()
         );
-        System.out.println("authtoken: " + authtoken);
         var authUser = authenticationManager.authenticate(authtoken).getPrincipal();
         var JWTtoken = tokenService.generateToken((User) authUser);
-        System.out.println(JWTtoken);
         return ResponseEntity.ok(new JWTtokenDTO(JWTtoken));
     }
 

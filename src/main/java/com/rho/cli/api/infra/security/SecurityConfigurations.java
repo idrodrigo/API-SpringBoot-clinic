@@ -35,6 +35,7 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(HttpMethod.POST, "/api/v1.0/authentication/login").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/v1.0/authentication/login").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/api/v1.0/user").permitAll();
                     auth.requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll();
                     auth.requestMatchers(HttpMethod.DELETE, "/api/v1.0/doctor/{id}").hasRole("ADMIN");
                     auth.requestMatchers(HttpMethod.DELETE, "/api/v1.0/patient/{id}").hasRole("ADMIN");
@@ -44,22 +45,6 @@ public class SecurityConfigurations {
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-//        System.out.println("securityFilterChain");
-//        return httpSecurity.csrf().disable().sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and().authorizeHttpRequests()
-//                .requestMatchers(HttpMethod.POST, "/api/login")
-//                .permitAll()
-//                .requestMatchers(HttpMethod.DELETE, "/api/doctor/{id}").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/api/patient/{id}").hasRole("ADMIN")
-//                .anyRequest()
-//                .authenticated()
-//                .and()
-//                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-//                .build();
-//    }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {

@@ -1,4 +1,0 @@
-spring:
-  profile.active: test
-  datasource:
-    url: ${DATASOURCE_URL_TEST}
