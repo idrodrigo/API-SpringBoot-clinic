@@ -12,22 +12,24 @@
 spring:
   profile.active: dev, test, prod
   datasource:
-    url: jdbc:mysql://localhost:3306/clinic?useSSL=false
-    username: root
-    password: 1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://dpg-ckrhqf7d47qs73a49a00-a.oregon-postgres.render.com:5432/clinic_0sdu
+    username: clinic_0sdu_user
+    password: F4ia4HoE4YOSoHDbz6i4Ld9CyjOA79ZX
+    driver-class-name: org.postgresql.Driver
   jpa:
-    hibernate:
-#      ddl-auto: update
     show-sql: true
+    database: postgresql
     properties:
       hibernate:
+        ddl-auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-#        dialect: org.hibernate.dialect.MySQL5Dialect
-        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          lob:
+#            non_contextual_creation: true
 
 api:
   security:
     token:
-      secret-key: ${JWT_SECRET_KEY}
+      secret-key: ${JWT_SECRET_KEY:secret}
       expiration-time: 172800

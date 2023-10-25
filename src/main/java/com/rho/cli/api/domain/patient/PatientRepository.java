@@ -10,7 +10,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 
     @Query(
             """
-            select p.isActive from patient p 
+            select p.isActive from patient p
             where p.isActive=true
             and
             p.id = :PatientId

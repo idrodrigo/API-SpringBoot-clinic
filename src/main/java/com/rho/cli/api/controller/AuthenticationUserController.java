@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1.0/authentication/login")
@@ -41,8 +38,15 @@ public class AuthenticationUserController {
                 userAuthenticationDTO.login(),
                 userAuthenticationDTO.password()
         );
+        System.out.println("authtoken: " + authtoken);
         var authUser = authenticationManager.authenticate(authtoken).getPrincipal();
         var JWTtoken = tokenService.generateToken((User) authUser);
+        System.out.println(JWTtoken);
         return ResponseEntity.ok(new JWTtokenDTO(JWTtoken));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> index() {
+        return ResponseEntity.ok("Greetings from Spring Boot!");
     }
 }
